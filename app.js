@@ -13,6 +13,3 @@ const PORT = 5760;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-
-

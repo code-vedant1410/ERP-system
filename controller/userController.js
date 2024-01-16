@@ -1,29 +1,74 @@
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 
-const userCollection = "users";
+// const userCollection = "users";
 
-const registerUser = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const existingUser = await con.collection("users").findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "Username already exists" });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await con
-      .collection(userCollection)
-      .insertOne({ username, password: hashedPassword });
-    console.log("ddd", result);
+// const registerUser = async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+//     const existingUser = await con.collection("users").findOne({ username });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "Username already exists" });
+//     }
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const result = await con
+//       .collection(userCollection)
+//       .insertOne({ username, password: hashedPassword });
+//     console.log("ddd", result);
     
-    if (result.insertedId) {
-      res.json({ message: "User registered successfully" });
-    } else {
-      res.status(500).json({ message: "Error registering user" });
+//     if (result.insertedId) {
+//       res.json({ message: "User registered successfully" });
+//     } else {
+//       res.status(500).json({ message: "Error registering user" });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+// module.exports = { registerUser };
+const User = require('../models/user');
+const userREPO = require('../repositories/userRepository');
+
+const userController = {
+  registerUser: async (req, res) => {
+    try {
+      const { username, password, role, dob, contact, gender } = req.body;
+      const newUser = new User({
+        username,
+        password,
+        role,
+        dob,
+        contact,
+        gender,
+      });
+      const savedUser = await newUser.save();
+      userREPO.successResponse(res, 'User registered successfully');
+    } catch (error) {
+      if (error.code === 11000) {
+        userREPO.errorResponse(res, 400, 'Username or email or number already exists');
+      } else {
+        console.error(error);
+        userREPO.errorResponse(res, 500, 'Internal Server Error', error);
+      }
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
+  },
+
+  loginUser: async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      const user = await User.findOne({ username });
+
+      if (!user || !(await user.checkPassword(password))) {
+        userREPO.errorResponse(res, 401, 'Invalid credentials');
+      } else {
+        userREPO.successResponse(res, 'User logged in successfully');
+      }
+    } catch (error) {
+      console.error(error);
+      userREPO.errorResponse(res, 500, 'Internal Server Error', error);
+    }
+  },
 };
 
-module.exports = { registerUser };
+module.exports = userController;
