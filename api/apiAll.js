@@ -7,7 +7,7 @@ const authRoutes = require("../routes/authRoutes");
 const authMiddleware = require("../middlewares/authMiddleware");
 const productRoutes = require("../routes/productRoutes");
 const salesRoutes = require("../routes/salesRoutes");
-const User = require("../routes/passRoutes");
+const User = require("../routes/passWordRoutes");
 
 app.use(errorHandler);
 app.use(express.json());
