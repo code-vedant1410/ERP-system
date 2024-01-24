@@ -8,6 +8,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const productRoutes = require("../routes/productRoutes");
 const salesRoutes = require("../routes/salesRoutes");
 const User = require("../routes/passWordRoutes");
+const upload = require("../routes/uploadRoute");
 
 app.use(errorHandler);
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use("/stock", stockRoutes);
 app.use("/products", productRoutes);
 app.use("/sales", salesRoutes);
 app.use("/pass", User);
+app.use("/upload", upload);
 
 app.set("views", __dirname);
 app.set("view engine", "ejs");
