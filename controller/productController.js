@@ -4,8 +4,8 @@ const errorResponse = require("../responses/errorResponse");
 const productController = {
   createProduct: async (req, res) => {
     try {
-      const { name, price, inventory, image } = req.body;
-      const newProduct = new Product({ name, price, inventory, image });
+      const { name, price, inventory } = req.body;
+      const newProduct = new Product({ name, price, inventory });
       const savedProduct = await newProduct.save();
       successResponse(res, savedProduct, "Product created successfully");
     } catch (error) {
@@ -15,7 +15,22 @@ const productController = {
   },
   getProducts: async (req, res) => {
     try {
-      const products = await Product.find();
+      const products = await Product.aggregate([
+        {
+          $addFields: {
+            newStringField: { $toString: "$_id" },
+            // You can add more fields as needed
+          },
+        },
+        {
+          $lookup: {
+            from: "files",
+            localField: "newStringField",
+            foreignField: "productId",
+            as: "result",
+          },
+        },
+      ]);
       successResponse(res, products, "Products retrieved successfully");
     } catch (error) {
       console.error(error);
