@@ -3,7 +3,7 @@ const router = express.Router();
 const StockItem = require("../models/stockItemModel");
 
 // Get all stock items
-router.get("/", async (req, res) => {
+router.get("/show", async (req, res) => {
   try {
     const stockItems = await StockItem.find({ isDeleted: false });
     res.json(stockItems);
@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new stock item
-router.post("/", async (req, res) => {
+router.post("/create", async (req, res) => {
   const stockItem = new StockItem({
     name: req.body.name,
     quantity: req.body.quantity,
@@ -51,7 +51,7 @@ router.delete("/:id", async (req, res) => {
     if (!stockItem) {
       return res.status(404).json({ message: "Stock item not found" });
     }
-    await stockItem.remove();
+    await stockItem.deleteOne();
     res.json({ message: "Stock item deleted" });
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -30,7 +30,7 @@ const productController = {
             as: "result",
           },
         },
-      ]);
+      ])
       successResponse(res, products, "Products retrieved successfully");
     } catch (error) {
       console.error(error);

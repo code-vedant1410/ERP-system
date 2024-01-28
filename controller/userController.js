@@ -37,8 +37,8 @@ const userController = {
       const newUser = new User({
         username,
         password,
-        role,
-        dob,
+        //role,
+        //dob,
         contact,
         gender,
       });
