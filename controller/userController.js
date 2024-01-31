@@ -14,7 +14,7 @@
 //       .collection(userCollection)
 //       .insertOne({ username, password: hashedPassword });
 //     console.log("ddd", result);
-    
+
 //     if (result.insertedId) {
 //       res.json({ message: "User registered successfully" });
 //     } else {
@@ -27,8 +27,10 @@
 // };
 
 // module.exports = { registerUser };
-const User = require('../models/user');
-const userREPO = require('../repositories/userRepository');
+const { errorHandler } = require("../middlewares/errorMiddleware");
+const User = require("../models/user");
+const userREPO = require("../repositories/userRepository");
+const bcrypt = require("bcrypt");
 
 const userController = {
   registerUser: async (req, res) => {
@@ -43,13 +45,17 @@ const userController = {
         gender,
       });
       const savedUser = await newUser.save();
-      userREPO.successResponse(res, 'User registered successfully');
+      userREPO.successResponse(res, "User registered successfully");
     } catch (error) {
       if (error.code === 11000) {
-        userREPO.errorResponse(res, 400, 'Username or email or number already exists');
+        userREPO.errorResponse(
+          res,
+          400,
+          "Username or email or number already exists"
+        );
       } else {
         console.error(error);
-        userREPO.errorResponse(res, 500, 'Internal Server Error', error);
+        userREPO.errorResponse(res, 500, "Internal Server Error", error);
       }
     }
   },
@@ -58,15 +64,18 @@ const userController = {
     try {
       const { username, password } = req.body;
       const user = await User.findOne({ username });
+      console.log(user);
 
+      // let isvlaidpassword = await bcrypt.compare(password, user.password);
+      // console.log("70", isvlaidpassword);
       if (!user || !(await user.checkPassword(password))) {
-        userREPO.errorResponse(res, 401, 'Invalid credentials');
+        userREPO.errorResponse(res, 401, "Invalid credentials");
       } else {
-        userREPO.successResponse(res, 'User logged in successfully');
+        userREPO.successResponse(res, "User logged in successfully", username);
       }
     } catch (error) {
       console.error(error);
-      userREPO.errorResponse(res, 500, 'Internal Server Error', error);
+      userREPO.errorResponse(res, 500, "Internal Server Error", error);
     }
   },
 };

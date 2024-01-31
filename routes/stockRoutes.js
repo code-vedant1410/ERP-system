@@ -5,12 +5,27 @@ const StockItem = require("../models/stockItemModel");
 // Get all stock items
 router.get("/show", async (req, res) => {
   try {
-    const stockItems = await StockItem.find({ isDeleted: false });
+    const stockItems = await StockItem.aggregate([
+      {
+        $match: { isDeleted: false } 
+      },
+      {
+        $group: {
+          _id: "$name",
+           items: { $addToSet: "$$ROOT" },
+          totalQuantity: { $sum: "$quantity" },
+          totalCost: { $sum: "$cost" }
+          
+        }
+      }
+    ]);
+
     res.json(stockItems);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 // Create a new stock item
 router.post("/create", async (req, res) => {
@@ -57,5 +72,7 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+
 
 module.exports = router;
