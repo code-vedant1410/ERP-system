@@ -1,5 +1,6 @@
 const multer = require("multer");
 const mongoose = require("mongoose");
+const { file } = require("pdfkit");
 const File = mongoose.model("File", {
   originalname: String,
   filename: String,
@@ -11,7 +12,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now() + ".jpg");
+    cb(null, file.fieldname+file.originalname + "-" + Date.now() + ".jpg");
   },
 });
 const upload = multer({ storage: storage }).array("images", 5);
@@ -28,6 +29,8 @@ const uploads = (req, res, next) => {
         .json({ error: "Internal server error", details: err.message });
     }
     const files = req.files;
+    console.log("32 files",files);
+    
     const fileDocuments = files.map((file) => ({
       originalname: file.originalname,
       filename: file.filename,

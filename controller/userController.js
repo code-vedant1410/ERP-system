@@ -27,25 +27,38 @@
 // };
 
 // module.exports = { registerUser };
+const { config } = require("dotenv");
 const { errorHandler } = require("../middlewares/errorMiddleware");
 const User = require("../models/user");
 const userREPO = require("../repositories/userRepository");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const configkey = require("../config/config");
 
 const userController = {
   registerUser: async (req, res) => {
     try {
-      const { username, password, role, dob, contact, gender } = req.body;
+      const { username, password, role, gender,email,mobile } = req.body;
       const newUser = new User({
         username,
         password,
-        //role,
-        //dob,
-        contact,
+        role,
+        mobile,
+        email,
         gender,
       });
       const savedUser = await newUser.save();
-      userREPO.successResponse(res, "User registered successfully");
+      console.log(savedUser);
+      const token = jwt.sign(
+        { userId: savedUser.id, username: savedUser.username },
+        configkey.secretKey,
+        { expiresIn: "1h" }
+      );
+        userREPO.successResponse(
+          res,
+          { savedUser, token },
+          "User registered successfully"
+        );
     } catch (error) {
       if (error.code === 11000) {
         userREPO.errorResponse(
@@ -71,7 +84,17 @@ const userController = {
       if (!user || !(await user.checkPassword(password))) {
         userREPO.errorResponse(res, 401, "Invalid credentials");
       } else {
-        userREPO.successResponse(res, "User logged in successfully", username);
+        const token = jwt.sign(
+          { userId: user.id, username: user.username },
+          configkey.secretKey,
+          { expiresIn: "1h" }
+        );
+
+        userREPO.successResponse(
+          res,
+          { user, token },
+          "User logged in successfully"
+        );
       }
     } catch (error) {
       console.error(error);
