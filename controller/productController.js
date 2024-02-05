@@ -1,4 +1,4 @@
-const Product = require("../models/product");
+const { Product, getProducts, getProductById } = require("../models/product");
 const successResponse = require("../responses/successResponse");
 const errorResponse = require("../responses/errorResponse");
 const multer = require("multer");
@@ -25,7 +25,7 @@ const productController = {
 
       const image = req.file;
 
-      const imageUrl = `/Users/vedantbhatt/Downloads${image.filename}`;
+      const imageUrl = `/Users/vedantbhatt/Downloads/${image.filename}`;
 
       const newProduct = new Product({
         name,
@@ -33,6 +33,7 @@ const productController = {
         inventory,
         image: imageUrl,
       });
+
       const savedProduct = await newProduct.save();
 
       successResponse(res, savedProduct, "Product created successfully");
@@ -45,21 +46,8 @@ const productController = {
 
   getProducts: async (req, res) => {
     try {
-      const products = await Product.aggregate([
-        {
-          $addFields: {
-            newStringField: { $toString: "$_id" },
-          },
-        },
-        {
-          $lookup: {
-            from: "files",
-            localField: "newStringField",
-            foreignField: "productId",
-            as: "result",
-          },
-        },
-      ]);
+      const products = await getProducts();
+
       successResponse(res, products, "Products retrieved successfully");
     } catch (error) {
       console.error(error);
@@ -85,6 +73,26 @@ const productController = {
     } catch (error) {
       console.error("Error adding image to product:", error.message);
       throw error;
+    }
+  },
+
+  getProductDetails: async (req, res) => {
+    const productId = req.params.id;
+    try {
+      const selectedProduct = await Product.findById(productId);
+
+      if (selectedProduct) {
+        successResponse(
+          res,
+          selectedProduct,
+          "Product details retrieved successfully"
+        );
+      } else {
+        errorResponse(res, 404, "Product not found");
+      }
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, 500, "Internal Server Error", error);
     }
   },
 };
