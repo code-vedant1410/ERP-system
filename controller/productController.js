@@ -52,6 +52,7 @@ const productController = {
     } catch (error) {
       console.error(error);
       errorResponse(res, 500, "Internal Server Error", error);
+      
     }
   },
 

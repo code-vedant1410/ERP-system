@@ -18,7 +18,7 @@ const productSchema = new mongoose.Schema(
 const Product = mongoose.model("Product", productSchema);
 
 const productFunctions = {
-  getProducts: () => products,
+  getProducts: () => Product,
   getProductById: (productId) => products.find(product => product.id === productId),
 };
 
