@@ -7,7 +7,8 @@ const authRoutes = require("../routes/authRoutes");
 const authMiddleware = require("../middlewares/authMiddleware");
 const productRoutes = require("../routes/productRoutes");
 const salesRoutes = require("../routes/salesRoutes");
-const User = require("../routes/passWordRoutes");
+const User = require("../routes/ForgotPassRoute");
+const User2 = require("../routes/resetPassRoute");
 const upload = require("../routes/uploadRoute");
 
 app.use(errorHandler);
@@ -18,6 +19,8 @@ app.use("/stock", stockRoutes);
 app.use("/products", productRoutes);
 app.use("/sales", salesRoutes);
 app.use("/pass", User);
+app.use("/pass", User2);
+
 app.use("/upload", upload);
 
 app.set("views", __dirname);

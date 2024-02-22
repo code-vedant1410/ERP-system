@@ -4,6 +4,7 @@ const api = require("./api/apiAll");
 const connection = require("./services/databaseServices");
 const cors = require('cors');
 const app = express();
+
 global.con = connection;
 require("dotenv").config();
 
