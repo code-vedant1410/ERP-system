@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const bcrypt = ""; //require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
@@ -23,14 +23,12 @@ const userSchema = new mongoose.Schema(
 userSchema.pre("save", async function (next) {
   const user = this;
   if (!user.isModified("password")) return next();
-  const saltRounds = 10;
-  const hash = await bcrypt.hashSync(user.password, saltRounds);
-  user.password = hash;
+  // const saltRounds = 10;
+  // const hash = await bcrypt.hashSync(user.password, saltRounds);
+  // user.password = hash;
   next();
 });
 
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
-
-

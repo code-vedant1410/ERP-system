@@ -2,11 +2,16 @@ const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const { sendPasswordResetEmail } = require("../utils/emailUtils");
 const crypto = require("crypto");
-const bcrypt = require("bcrypt");
+const bcrypt =  require("bcryptjs");
 const bcryptSalt = 10;
 
 exports.resetPassword = async (req, res) => {
   const { token, id, newPassword } = req.body;
+
+  // Validate input
+  if (!token || !id || !newPassword) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
 
   try {
     // Find the user by id
@@ -21,10 +26,15 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
+    // Check token expiration (if implemented)
+    if (tokenDoc.expiresAt < Date.now()) {
+      return res.status(400).json({ message: "Token expired" });
+    }
+
     // Compare the reset token with the one stored in the database
     const isValidToken = await bcrypt.compare(token, tokenDoc.token);
     if (!isValidToken) {
-      return res.status(400).json({ message: "Invalid or expired token" });
+      return res.status(400).json({ message: "Invalid token" });
     }
 
     // Hash the new password
@@ -39,7 +49,8 @@ exports.resetPassword = async (req, res) => {
 
     return res.status(200).json({ message: "Password reset successful" });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error(error);
+    // Provide more specific error messages based on the error type
+    return res.status(500).json({ message: "An error occurred" });
   }
 };

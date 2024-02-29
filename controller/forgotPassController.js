@@ -2,7 +2,7 @@ const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const { sendPasswordResetEmail } = require("../utils/emailUtils");
 const crypto = require("crypto"); // Importing the crypto module for generating tokens
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
 exports.forgotPassword = async (req, res) => {
