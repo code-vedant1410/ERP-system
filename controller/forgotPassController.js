@@ -20,7 +20,7 @@ exports.forgotPassword = async (req, res) => {
     let token = await Token.findOne({ userId: user._id });
     if (token) await token.deleteOne();
 
-    const resetToken = crypto.randomBytes(32).toString("hex"); 
+    const resetToken = crypto.randomBytes(32).toString("hex");
     const hash = await bcrypt.hash(resetToken, Number(bcryptSalt));
     await new Token({
       userId: user._id,
@@ -28,10 +28,8 @@ exports.forgotPassword = async (req, res) => {
       createdAt: Date.now(),
     }).save();
 
-  
-
-
     const resetLink = `http://localhost:5173/reset?token=${resetToken}&id=${user._id}`;
+
     // Construct reset link with token
     await sendPasswordResetEmail(email, resetLink); // Send reset link to user's email
 

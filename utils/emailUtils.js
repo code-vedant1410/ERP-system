@@ -11,11 +11,8 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send a password reset email
-async function sendPasswordResetEmail(email, resetToken) {
+async function sendPasswordResetEmail(email, resetLink) {
   try {
-    const resetLink = `http://localhost:5173/reset?token=${resetToken}&email=${email}`;
-    // Replace "your_other_port" with the port where your reset page is hosted
-
     // Send email
     await transporter.sendMail({
       from: "vedantb658@gmail.com", // Your email address
@@ -32,6 +29,5 @@ async function sendPasswordResetEmail(email, resetToken) {
     throw error;
   }
 }
-
 
 module.exports = { sendPasswordResetEmail };

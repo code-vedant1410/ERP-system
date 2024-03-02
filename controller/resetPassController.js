@@ -2,7 +2,7 @@ const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const { sendPasswordResetEmail } = require("../utils/emailUtils");
 const crypto = require("crypto");
-const bcrypt =  require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
 exports.resetPassword = async (req, res) => {
@@ -47,7 +47,12 @@ exports.resetPassword = async (req, res) => {
     // Delete the token from the database
     await tokenDoc.deleteOne();
 
-    return res.status(200).json({ message: "Password reset successful" });
+    return res
+      .status(200)
+      .json({
+        message:
+          " Password is reset succesfull, ...redirecting you to the login page",
+      });
   } catch (error) {
     console.error(error);
     // Provide more specific error messages based on the error type
