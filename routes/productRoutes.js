@@ -11,6 +11,7 @@ router.post(
 );
 router.get("/getproducts", productController.getProducts);
 router.get("/product/:id", productController.getProductDetails);
+router.get('/category/:category', productController.getProductsByCategory);
 router.get(
   "/open/:id",
   acceptRequestMiddleware,

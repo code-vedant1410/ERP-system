@@ -19,7 +19,7 @@ const upload = multer({ storage: storage });
 const productController = {
   createProduct: async (req, res) => {
     try {
-      const { name, price, inventory } = req.body;
+      const { name, price, inventory, category } = req.body;
 
       if (!req.file) {
         return errorResponse(res, 400, "Image file is required");
@@ -40,6 +40,7 @@ const productController = {
         name,
         price,
         inventory,
+        category,
         image: savedProductImage._id,
       });
 
@@ -67,6 +68,27 @@ const productController = {
       console.error(error);
       errorResponse(res, 500, "Internal Server Error", error);
  
+    }
+  },
+  getProductsByCategory: async (req, res) => {
+    try {
+      const category = req.params.category; // Extract category from request
+      const products = await Product.find({ category }); // Filter products by category
+      
+      // Check if no products were found for the provided category
+      if (products.length === 0) {
+        return errorResponse(res, 404, `No products found in category '${category}'`);
+      }
+  
+      // If products are found, return them in the response
+      successResponse(
+        res,
+        products,
+        `Products in category '${category}' retrieved successfully`
+      );
+    } catch (error) {
+      console.error(error);
+      errorResponse(res, 500, "Internal Server Error", error);
     }
   },
 
