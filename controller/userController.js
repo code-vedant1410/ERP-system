@@ -94,6 +94,26 @@ const userController = {
       userRepo.errorResponse(res, 500, "Internal Server Error");
     }
   },
+  
+  updateUserProfile: async (req, res) => {
+    try {
+      // Extract user ID and updated details from request body
+      const userId = req.userId; // Assuming the user ID is extracted from authentication middleware
+      const updatedDetails = req.body;
+
+      // Find the user by ID and update their details
+      const updatedUser = await User.findByIdAndUpdate(userId, updatedDetails, { new: true });
+      if (!updatedUser) {
+        return userRepo.errorResponse(res, 404, "User not found");
+      }
+
+      // Return success response with updated user details
+      userRepo.successResponse(res, updatedUser.toObject(), "User profile updated successfully");
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      userRepo.errorResponse(res, 500, "Internal Server Error");
+    }
+  },
 };
 
 module.exports = userController;
