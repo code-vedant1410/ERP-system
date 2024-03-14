@@ -4,13 +4,13 @@ async function sendEmail(userEmail, subject, body, attachmentPath) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "vedantb658@gmail.com",
-      pass: "kdoi srhw abus egus",
+      user: "inframax07@gmail.com",
+      pass: "xoqr beri hcac cnjx",
     },
   });
 
   const mailOptions = {
-    from: "vedantb658@gmail.com",
+    from: "inframax07@gmail.com",
     to: userEmail,
     subject: subject,
     text: body,
