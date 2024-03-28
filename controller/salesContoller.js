@@ -137,10 +137,6 @@
 
 //---------------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
 const Sales = require("../models/sales");
 const Product = require("../models/product");
 const successResponse = require("../responses/successResponse");

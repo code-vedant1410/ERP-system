@@ -34,8 +34,8 @@ const salesSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now
-}
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("Sales", salesSchema);
